@@ -1,0 +1,32 @@
+name: .NET iOS Build and Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Install MAUI workloads (if using MAUI)
+      run: dotnet workload install maui
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build iOS project
+      run: dotnet build YourApp.iOS.csproj -c Release -f net8.0-ios --no-restore
+
+    - name: Run Unit Tests (Optional - only if you have test project)
+      run: dotnet test YourApp.Tests.csproj --no-build --verbosity normal
